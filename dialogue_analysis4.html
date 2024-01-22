@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title> Dialogue analysis for conversation turns in job interviews experiment 2-1</title>
+    <script src="jspsych/jspsych.js"></script>
+    <script src="jspsych/plugin-fullscreen.js"></script>
+    <script src="jspsych/plugin-html-keyboard-response.js"></script>
+    <script src="jspsych/plugin-html-button-response.js"></script>
+    <script src="jspsych/plugin-browser-check.js"></script>
+    <script src="jspsych/plugin-survey-text.js"></script>
+    <script src="jspsych/plugin-audio-button-response.js"></script>
+    <script src="jspsych/plugin-preload.js"></script>
+    <script src="jspsych/plugin-resize.js"></script>
+    <script src="jspsych/extension-mouse-tracking.js"></script>
+    <script src="jspsych/plugin-call-function.js"></script>
+    <link href="jspsych/jspsych.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body></body>
+  <script>
+
+    /* initialize jsPsych (version 7.3.1) */
+    var jsPsych = initJsPsych({
+      extensions: [
+        {type: jsPsychExtensionMouseTracking}
+      ]
+    });
+
+    /* create timeline */
+    var timeline = [];
+
+    /* run experiment in fullscreen mode*/
+    var fullscreen = {
+      type: jsPsychFullscreen,
+      fullscreen_mode: true
+    };
+    timeline.push(fullscreen);
+
+    /* measuring a credit card and resize the display */
+    /* var resize = {
+      type: jsPsychResize,
+      item_width: 3+ 3/8,
+      item_height: 2+ 1/8,
+      prompt: "<p>Click and drag the lower right corner of the box until the box is the same size as a credit card held up to the screen. </p>",
+      pixels_per_unit: 160
+    };
+    timeline.push(resize); */
+
+    /* preload images and audios */
+    var preload = {
+      type: jsPsychPreload,
+      auto_preload:true,
+      message: `Please wait while the experiment loads...`,
+      max_load_time: 60000 //1 minute
+    };
+    timeline.push(preload);
+
+    /* add browser check: include only desktop/laptop participants */
+    var browsercheck = {
+      type: jsPsychBrowserCheck,
+      inclusion_function: (data) => {
+        return data.mobile === false
+      },
+      exclusion_message: (data) => {
+        if(data.mobile){
+          return '<p>You must use a desktop/laptop computer to participate in this experiment. </p>';
+        }
+      }
+    };
+    timeline.push(browsercheck)
+
+    /* define welcome message trial */
+    var welcome = {
+      type: jsPsychHtmlButtonResponse,
+      stimulus:
+      `<p style="color: brown; font-size: 28px; font-weight: bold; text-align: center;">Welcome to the experiment.</p>
+      <p style="color: brown; font-size: 28px; font-weight: bold; text-align: center;">Please carefully read the instructions below before you start.</p>
+      <ul>
+      <li><p style="text-align: left";>In this study, you need to carefully listen to some interview audios. The audios are provided by M.C Company, which are recorded in interviews for a delivery driver position.</p></li>
+      <li><p style="text-align: left";>It should be noted that interviewers have done a very detailed investigation of every candidate's background beforehand and therefore, when an interviewee gives an answer, interviewers are able to recognise whether the interviewee is telling the truth or not. However, all the interviewees are not aware of this fact and would sometimes <b>give ambiguous or deceptive answers</b> to try to leave interviewers a good impression.</p></li>
+      <li><p style="text-align: left";>For each trial, you will see four images in the screen. <b>As soon as</b> you hear the interviewee giving an answer to the question, <b>take interviewees' intention of possibly being deceptive and ambiguous into consideration</b>, choose and click <b>the image that you think fit the real situation of the interviewee</b>. If you <b>fail to click any of the image within a certain time</b>, the experiment page will directly go to the next trial. Therefore, do <b>make sure you respond and click as soon as possible when hearing the answer of the interviewee</b>.</p></li>
+      <li><p style="text-align: left";>Your session should last for up to <i>15-20 minutes</i>, including 6 interviewees' interview, in which each interviewee answers 6 questions.</p></li> 
+      </ul>`,
+      prompt: "<p><i>Click the Continue button to begin.</p></i>",
+      choices: ['Continue']
+    };
+    timeline.push(welcome);
+
+    /* define information sheet and consent form page */
+    var consent = {
+      type: jsPsychHtmlButtonResponse,
+      stimulus:
+      `<p style="font-weight: bold; text-align: left;">Information Sheet and Consent Page</p>
+      <ul>
+      <li><p style="text-align: left";><b>Title of the study</b>: Dialogue analysis for conversation turns in job interviews</li></p>
+      <li><p style="text-align: left";><b>Nature of the study</b>: You are invited to participate in a study which involves carefully listening to interview audios and choosing the pictures that you think fit the interviewees' answers the most for each question. During the experiment, your mouse movement will be recorded. Before the experiment, we may also have some questions about your experience (e.g. age, gender, language background). Your responses will be recorded. Your session should last up to 15 to 20 minutes.</li></p>
+      <li><p style="text-align: left";><b>Compensation</b>: You will be paid &#163;2 for your participation in this study.</p></li>
+      <li><p style="text-align: left";><b>Confidentiality</b>: The data collected will not contain any information that will make it possible to identify you.</li></p>
+      <li><p style="text-align: left";><b>Subject's rights</b>: Your participation is voluntary, and you may withdraw from the study anytime within two weeks of the date of your data collection and for any reason. You may ask that any data you have supplied to that point be withdrawn/destroyed. You will still be reimbursed for your contribution.</li></p>
+      <li><p style="text-align: left";><b>Contact</b>: If you have any questions about what you've just read, please feel free to ask, or contact us later. You can contact us by email at Wei Li (s1833067@ed.ac.uk) or Prof Martin Corley (Martin.Corley@ed.ac.uk).</li></p>
+      </ul>
+      <p style="text-align: left";>This project has been approved by PPLS Ethics Committee (Ref. number: 271-2122/3). If you have concerns regarding your rights as a participant in this research, they can be contacted at 0131 650 4020 or ppls.ethics@ed.ac.uk.</p>
+      <p style="text-align: left";>By accepting this HIT, you consent to the following:</p>
+      <ol>
+      <li><p style="text-align: left";><b>I agree to participate in this study.</li></p></b>
+      <li><p style="text-align: left";>I confirm that I have read and understood <b>how my data will be stored and used</b>.</li></p>
+      <li><p style="text-align: left";>I understand that I have <b>the right to terminate this session</b> at any point. If I choose to <b>withdraw after completing the study</b>, my data will be deleted at that time.</li></p>
+      </ol>`,
+      prompt:"<p><i>Click the button if you consent to participate.</p></i>",
+      choices: ['I Consent']
+    };
+    timeline.push(consent);
+
+    /* demographic questions */
+    var age = {
+      type: jsPsychSurveyText,
+      questions: [
+        {prompt: 'What is your age?', required: true}
+      ]
+    };
+    timeline.push(age);
+
+    var gender = {
+      type: jsPsychSurveyText,
+      questions: [
+        {prompt: 'What is your gender?', required: true}
+      ]
+    };
+    timeline.push(gender);
+
+    var nationality = {
+      type: jsPsychSurveyText,
+      questions: [
+        {prompt: 'What is your nationality?', required: true}
+      ]
+    };
+    timeline.push(nationality);
+
+    var nativelanguage = {
+      type: jsPsychSurveyText,
+      questions: [
+        {prompt: 'What is your native language?', required: true}
+      ]
+    };
+    timeline.push(nativelanguage);
+
+    /* define audio test and reminder pages */
+    var calibration = {
+      type: jsPsychHtmlButtonResponse,
+      stimulus: '<p> </p>',
+      choices: ['Ready']
+    };
+    timeline.push(calibration);
+
+    var audiotest = {
+      type: jsPsychAudioButtonResponse,
+      stimulus: "audios/Practice_audiocheck.wav",
+      choices: ["yellow star", "green round", "blue triangle", "red heart"],
+      prompt: "<p style='text-align: left; position:absolute; left: 2%; top: 2%'>Before the experiment starts, please confirm that your audio has been set up and that you can hear the sound clearly.</p>",
+      button_html: [`<button class="jspsych-btn" style="position:absolute; left: 25%; top: 25%; width: 15%; transform: translate(-50%,-50%); aspect-ratio: 1; background: url('images/%choice%.jpg') center/contain;"></button>`,
+      `<button class="jspsych-btn" style="position:absolute; right: 25%; top: 25%; width: 15%; transform: translate(50%,-50%); aspect-ratio: 1; background: url('images/%choice%.jpg') center/contain;"></button>`,
+      `<button class="jspsych-btn" style="position:absolute; left: 25%; bottom: 25%; width: 15%; transform: translate(-50%,50%); aspect-ratio: 1; background: url('images/%choice%.jpg') center/contain;"></button>`,
+      `<button class="jspsych-btn" style="position:absolute; right: 25%; bottom: 25%; width: 15%; transform: translate(50%,50%); aspect-ratio: 1; background: url('images/%choice%.jpg') center/contain;"></button>`],
+      response_allowed_while_playing: false,
+      extensions:[{type: jsPsychExtensionMouseTracking}]
+    };
+    timeline.push(audiotest);
+
+    timeline.push(calibration);
+
+    var reminder = {
+      type: jsPsychAudioButtonResponse,
+      stimulus: "audios/brief instruction beginning.wav",
+      choices: ["start", "ready sign", "image appear", "mouse moving"],
+      prompt: "<p style='text-align: left; position:absolute; left: 2%; top: 1%'>The experiment will start now. Please remember, what you need to do is carefully listening to the conversations, taking interviewees' intention of possibly being deceptive and ambiguous into consideration, and then clicking on the qualification image that you think the interviewee is really describing. Good luck! Click any of the images below to continue.</p>",
+      button_html: [`<button class="jspsych-btn" style="position:absolute; left: 25%; top: 25%; width: 15%; transform: translate(-50%,-50%); aspect-ratio: 1; background: url('images/%choice%.png') center/contain;"></button>`,
+      `<button class="jspsych-btn" style="position:absolute; right: 25%; top: 25%; width: 15%; transform: translate(50%,-50%); aspect-ratio: 1; background: url('images/%choice%.png') center/contain;"></button>`,
+      `<button class="jspsych-btn" style="position:absolute; left: 25%; bottom: 25%; width: 15%; transform: translate(-50%,50%); aspect-ratio: 1; background: url('images/%choice%.png') center/contain;"></button>`,
+      `<button class="jspsych-btn" style="position:absolute; right: 25%; bottom: 25%; width: 15%; transform: translate(50%,50%); aspect-ratio: 1; background: url('images/%choice%.png') center/contain;"></button>`],
+      response_allowed_while_playing: false,
+      extensions:[{type: jsPsychExtensionMouseTracking}]
+    };
+    timeline.push(reminder);
+
+    /* define experiment trials */
+
+    /* create the audio function for later use */
+    function audio_trial(stimulus_filename, oneF_image, twoF_image, fourF_image, allF_image, finish_on_response) {
+      var all_choices = [oneF_image, twoF_image, fourF_image, allF_image];
+      var audio = {
+        type: jsPsychAudioButtonResponse,
+        stimulus: "audios/"+stimulus_filename,
+        //if randomizing the order of images:
+        // choices: jsPsych.randomization.repeat(all_choices,1),
+        // if not randomizing the order of images:
+        choices: all_choices,
+        button_html: [`<button class="jspsych-btn" style="position:absolute; left: 25%; top: 25%; width: 15%; transform: translate(-50%,-50%); aspect-ratio: 1; background: url('images/%choice%.jpg') center/contain;"></button>`,
+        `<button class="jspsych-btn" style="position:absolute; right: 25%; top: 25%; width: 15%; transform: translate(50%,-50%); aspect-ratio: 1; background: url('images/%choice%.jpg') center/contain;"></button>`,
+        `<button class="jspsych-btn" style="position:absolute; left: 25%; bottom: 25%; width: 15%; transform: translate(-50%,50%); aspect-ratio: 1; background: url('images/%choice%.jpg') center/contain;"></button>`,
+        `<button class="jspsych-btn" style="position:absolute; right: 25%; bottom: 25%; width: 15%; transform: translate(50%,50%); aspect-ratio: 1; background: url('images/%choice%.jpg') center/contain;"></button>`],
+        response_allowed_while_playing: finish_on_response,
+        trial_ends_after_audio: !finish_on_response,
+        response_ends_trial: finish_on_response,
+        trial_duration: 17000,
+        extensions:[{type: jsPsychExtensionMouseTracking}]
+      };
+      return audio;
+    };
+
+    /* first construct fluency/disfluency list */
+    var fluency_list = [
+      "d","d","d","d","d","d",
+      "f","f","f","f","f","f"
+    ];
+    fluency_list = jsPsych.randomization.shuffle(fluency_list);
+
+   /* construct gender list */ 
+   var gender_list = [
+      "female","female","female","female","female","female",
+      "male","male","male","male","male","male",
+   ];
+    gender_list = jsPsych.randomization.shuffle(gender_list);
+
+    /* define experimental items for each Speaker */
+    var experiment_items = {
+      1: [1,4],
+      2: [2,5],
+      3: [3,6],
+      4: [1,4],
+      5: [2,6],
+      6: [3,5]
+    };
+
+    /* create timelines for each speaker */
+    var speaker_timelines = [];
+    for (var speaker_n=1; speaker_n<7; speaker_n++) {
+      var speaker_timeline = [];
+      for (var item_n=1; item_n<7; item_n++) {
+        if (experiment_items[speaker_n].includes(item_n)) {
+          // experiment trial!
+          var fluency = fluency_list.pop();
+          var gender = gender_list.pop();
+          var filename = `g_interviewer${speaker_n}_item${item_n}_${fluency}.wav`;
+          var audio_path = `Speaker ${speaker_n}/interviewer${speaker_n}`;
+          speaker_timeline.push(calibration);
+          speaker_timeline.push(audio_trial(audio_path+"/"+filename, `oneF_${item_n}`, `twoF_${item_n}`, `fourF_${item_n}`, `allF_${item_n}`, false));
+          filename = `interviewee${speaker_n}_${gender}_item${item_n}_${fluency}.wav`;
+          audio_path = `Speaker ${speaker_n}/interviewee${speaker_n}`;
+          speaker_timeline.push(audio_trial(audio_path+"/"+filename, `oneF_${item_n}`, `twoF_${item_n}`, `fourF_${item_n}`, `allF_${item_n}`, true));
+        } else {
+          // filler trial!
+          var filename = `g_interviewer${speaker_n}_item${item_n}_filler.wav`;
+          var audio_path = `Speaker ${speaker_n}/interviewer${speaker_n}`;
+          speaker_timeline.push(calibration);
+          speaker_timeline.push(audio_trial(audio_path+"/"+filename, `oneF_${item_n}`, `twoF_${item_n}`, `fourF_${item_n}`, `allF_${item_n}`, false));
+          filename = `interviewee${speaker_n}_${gender}_item${item_n}_filler.wav`;
+          audio_path = `Speaker ${speaker_n}/interviewee${speaker_n}`;
+          speaker_timeline.push(audio_trial(audio_path+"/"+filename, `oneF_${item_n}`, `twoF_${item_n}`, `fourF_${item_n}`, `allF_${item_n}`, true));
+        }
+      }
+      speaker_timelines.push(speaker_timeline);
+    }
+
+    speaker_timelines = jsPsych.randomization.shuffle(speaker_timelines);
+
+    /* define middle attention check trial */
+    var middle_attention_trial = {
+      type: jsPsychAudioButtonResponse,
+      stimulus: "audios/attentioncheck_middle.wav",
+      choices: ["allF_4", "allF_1", "allF_5", "allF_6"],
+      prompt: "<p style='text-align: left; position:absolute; left: 2%; top: 2%'>Click on the interviewer's choice:</p>",
+      button_html: [`<button class="jspsych-btn" style="position:absolute; left: 25%; top: 25%; width: 15%; transform: translate(-50%,-50%); aspect-ratio: 1; background: url('images/%choice%.jpg') center/contain;"></button>`,
+      `<button class="jspsych-btn" style="position:absolute; right: 25%; top: 25%; width: 15%; transform: translate(50%,-50%); aspect-ratio: 1; background: url('images/%choice%.jpg') center/contain;"></button>`,
+      `<button class="jspsych-btn" style="position:absolute; left: 25%; bottom: 25%; width: 15%; transform: translate(-50%,50%); aspect-ratio: 1; background: url('images/%choice%.jpg') center/contain;"></button>`,
+      `<button class="jspsych-btn" style="position:absolute; right: 25%; bottom: 25%; width: 15%; transform: translate(50%,50%); aspect-ratio: 1; background: url('images/%choice%.jpg') center/contain;"></button>`],
+      response_allowed_while_playing: false,
+      extensions:[{type: jsPsychExtensionMouseTracking}]
+    };
+
+    /* define end attention check trial */
+    var end_attention_trial = {
+      type: jsPsychAudioButtonResponse,
+      stimulus: "audios/attentioncheck_end.wav",
+      choices: ["oneF_2", "oneF_4", "oneF_3", "oneF_6"],
+      prompt: "<p style='text-align: left; position:absolute; left: 2%; top: 2%'>Click on the interviewer's choice:</p>",
+      button_html: [`<button class="jspsych-btn" style="position:absolute; left: 25%; top: 25%; width: 15%; transform: translate(-50%,-50%); aspect-ratio: 1; background: url('images/%choice%.jpg') center/contain;"></button>`,
+      `<button class="jspsych-btn" style="position:absolute; right: 25%; top: 25%; width: 15%; transform: translate(50%,-50%); aspect-ratio: 1; background: url('images/%choice%.jpg') center/contain;"></button>`,
+      `<button class="jspsych-btn" style="position:absolute; left: 25%; bottom: 25%; width: 15%; transform: translate(-50%,50%); aspect-ratio: 1; background: url('images/%choice%.jpg') center/contain;"></button>`,
+      `<button class="jspsych-btn" style="position:absolute; right: 25%; bottom: 25%; width: 15%; transform: translate(50%,50%); aspect-ratio: 1; background: url('images/%choice%.jpg') center/contain;"></button>`],
+      response_allowed_while_playing: false,
+      extensions:[{type: jsPsychExtensionMouseTracking}]
+    };
+
+    timeline = timeline.concat(speaker_timelines[0]);
+    timeline = timeline.concat(speaker_timelines[1]);
+    timeline = timeline.concat(speaker_timelines[2]);
+    timeline.push(calibration);
+    timeline.push(middle_attention_trial);
+    timeline = timeline.concat(speaker_timelines[3]);
+    timeline = timeline.concat(speaker_timelines[4]);
+    timeline = timeline.concat(speaker_timelines[5]);
+    timeline.push(calibration);
+    timeline.push(end_attention_trial);
+
+    /* after-experiment survey section */
+    var survey_intro = {
+      type:jsPsychHtmlButtonResponse,
+      stimulus:
+      `<p style="font-size: 28px; font-weight: bold; text-align: center;">After-Experiment Feedback</p>
+      <ul>
+      <li><p style="text-align: left";>Thank you for participating in this research. You have made a meaningful contribution to a developing body of knowledge in psychology, and we would like to acknowledge at that contribution. Before completely finishing this study, there is one more important thing we would like to ask you to do.</p></li>
+      <li><p style="text-align: left";>The following pages will contain two after-experiment feedback questions we would like you to fill, so we could know more about how you feel about this study, which is very important to us.</p></li>
+      </ul>`,
+      prompt: "<p><i>Please click the Continue button to begin.</p></i>",
+      choices: ['Continue']
+    };
+    timeline.push(survey_intro);
+
+    var experiment_intention = {
+      type: jsPsychSurveyText,
+      questions: [
+        {prompt: 'After listening to the audios and finishing all the tasks in the experiment, what do you think this study is about?', rows: 7, required: true}
+      ]
+    };
+    timeline.push(experiment_intention);
+
+    var suggestions = {
+      type: jsPsychSurveyText,
+      questions: [
+        {prompt: 'If you have any suggestions for the experiment you just participated, please write them down here.', rows:7, required: true}
+      ]
+    };
+    timeline.push(suggestions);
+
+    /* function to save data (work in conjunction with write_data.php) */
+    function saveData(name, data){
+      let xhr = new XMLHttpRequest();
+      xhr.open('POST', 'write_data.php'); // 'write_data.php' is the
+                                          // path to the php file
+                                          // described above.
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.send(JSON.stringify({filename: name, filedata: data}));
+    }
+
+    /*function saveData(name, data_in){
+    var url = 'write_data.php';
+    var data_to_send = {filename: name, filedata: data_in};
+    fetch(url, {
+        method: 'POST',
+        body: JSON.stringify(data_to_send),
+        headers: new Headers({
+                'Content-Type': 'application/json'
+        })
+    });
+  }*/
+
+    /* capture info from Prolific (source: https://www.jspsych.org/7.1/overview/prolific/) */
+    var subject_id = jsPsych.data.getURLVariable('PROLIFIC_PID');
+    var study_id = jsPsych.data.getURLVariable('STUDY_ID');
+    var session_id = jsPsych.data.getURLVariable('SESSION_ID');
+
+    /* just in case the prolific id does not work: set up random participant ID (15 characters) */
+    var participant_id = jsPsych.randomization.randomID(15);
+    var short_id = participant_id.substring(0,4); // for data protection
+
+    /* add the ID variable to the dataset */
+    jsPsych.data.addProperties({subject: subject_id,
+                                study_id: study_id,
+                                session_id: session_id,
+                                participant_id: participant_id,
+                                short_id: short_id});
+
+    var save_data = {
+      type: jsPsychCallFunction,
+      func: function()
+      {
+        saveData("DATA_".concat(subject_id), jsPsych.data.get().csv())
+      }
+    }
+    timeline.push(save_data);
+
+    var off_screen = {
+      type: jsPsychFullscreen,
+      fullscreen_mode: false
+    };
+    timeline.push(off_screen);
+
+       /* define debriefing page */
+       var debriefing = {
+      type: jsPsychHtmlButtonResponse,
+      stimulus:
+      `<p style="font-weight: bold; text-align: left;">Debriefing Sheet</p>
+      <ul>
+        <li><p style="text-align: left;"><b>Project Title</b>: Exploring the role of social reasoning in interpreting scalar quantifier 'some' in context</li></p>
+        <li><p style="text-align: left;"><b>Investigators</b>:</li></p>
+      </ul>
+      <ol>
+        <li><p style="text-align: left;"><b>Wei Li</b>, PhD student, Department of Psychology, University of Edinburgh</li></p>
+        <li><p style="text-align: left;"><b>Dr. Martin Corley</b>, Professor, Department of Psychology, University of Edinburgh</li></p>
+        <li><p style="text-align: left;"><b>Dr. Hannah Rohde</b>, Reader, Linguistics and English Language, University of Edinburgh</li></p>
+      </ol>
+      <ul>
+        <p style="text-align: left; font-size: 16px;">Thank you for participating in this research! Now that your participation is complete, we can tell you more about the study you just took part in.</p>
+      <li><p style="text-align: left; font-size: 16px;"><b>What is this study really about?</b></p></li>  
+        <p style="text-align: left; font-size: 16px;">This study focuses on exploring how people understand the word 'some'. Based on the results of previous research, we presume that people's interpretations of this word are dependent on contexts. The literal meaning of 'some' for us is 'some and possibly all', but in many real-life situations, the meaning we actually take for understanding further sentences is actually 'some but not all', even <i>one</i> or <i>none</i> depending on various ways of reasoning in different contexts.</p>
+        <p style="text-align: left; font-size: 16px;">For example, in one of our previous experiments, participants hear a conversation with interviewer asking, "How many 'A's have you got for your psychology modules?", and interviewer answering with "I've got, uh, some 'A's". Compared to a fluent answer "I've got some 'A's", the disfluent 'uh' in the conversation makes participant wonder whether the interviewee is giving a sincere answer and whether the disfluency indicates that the interviewee is possibly exaggerating the number of good grades he/she got. Therefore, participants tend to choose an image that have less 'A's than described in disfluent condition compared to a fluent condition. This makes us believe that disfluency is possible to lead participants to believe 'some' means a value that is less than what the speaker says. We then wonder, is it possible to flip over the results by merely changing a context in which 'some' is possible to lead to an interpretation of meaning more than what the speaker utters. This is basically what this experiment is trying to test. </p>
+      <li><p style="text-align: left; font-size: 16px;"><b>How do we test it in our current experiment?</b></p></li>  
+        <p style="text-align: left; font-size: 16px;">Alike the previous experiment, we present a set-up interview situation where the interviewee would try their best to leave a good impression on interviewers to get the competitive position. In the recordings you heard during the experiment, disfluencies, like 'uh', are manipulated to indicate interviewees' intention of being ambiguous or even deceptional. We assume that disfluencies affect listeners' judgment on speakers' sentences and therefore, affect the understanding of 'some'. For example, if the answer to the question "How many 'F's have you got?" is disfluent (i.e., I got, uh, some 'F's), compared to a fluent case, participants could assume that the interviewee is trying to be ambiguous of the number of 'F's they got. They might reason that the interviewee got more 'F's than expected. This would lead to more tendency of choosing images with more 'F's than interviewees' intended number and possibly more hesitation of choosing when hearing disfluent utterances than when hearing fluent ones.</p>
+      <li><p style="text-align: left; font-size: 16px;"><b>Confidentiality and contact information</b></p></li>  
+        <p style="text-align: left; font-size: 16px;">As the aim of this research is to explore the computation processing of <i>some</i> in the speech, the fact that the word 'some' is of the focus, as well as the interview recordings are set-up contexts by researchers will be concealed. We apologize for only partially disclosing the nature of the research at the beginning of the study, but this was necessary to reduce potential bias in behaviour.</p>
+        <p style="text-align: left; font-size: 16px;">Importantly, we ask you that please do not discuss this study with anyone who might take part in it later. Nevertheless, we understand that the study may evoke feelings that you would like to discuss with your friends or partner, thus feel free to do so if they have already taken part in the study, are ineligible, or will not participate. If you print a copy of this information, we similarly ask that you please take care to avoid leaving this debriefing sheet where others may see it. We are interested in how thoughts, feelings, and behaviour occur naturally, and prior knowledge of the study's goals may bias responses.</p>
+        <p style="text-align: left; font-size: 16px;">Please contact <b>Wei Li (s1833067@ed.ac.uk)</b> or <b>Prof Martin Corley (Martin.Corley@ed.ac.uk)</b> if you have any questions regarding this research, or if you would like to know the outcomes of the study.</p>
+        <p style="text-align: left; font-size: 16px;">Thank you again for your time and cooperation. It is greatly appreciated.</p>
+      </ul>`,
+      prompt:"<p><i>Click the Finish button to end the experiment</p></i>",
+      choices: ['Finish']
+    };
+    timeline.push(debriefing);
+    
+    /* prolific completion URL (source: https://www.jspsych.org/7.1/overview/prolific/) */
+    var completioncode = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: `<p>Here's the end of the experiment. Thanks for participating!</p>
+      <p><a href="https://app.prolific.co/submissions/complete?cc=CVUGWK8T">Click here to return to Prolific and complete the study</a>.</p>`,
+      choices: "NO_KEYS"
+    };
+    timeline.push(completioncode);
+
+    /* start the experiment */
+    jsPsych.run(timeline);
+
+  </script>
+</html>
